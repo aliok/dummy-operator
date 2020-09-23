@@ -65,10 +65,24 @@ func schema_pkg_apis_operator_v1alpha1_KnativeKafkaSpec(ref common.ReferenceCall
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "KnativeKafkaSpec defines the desired state of KnativeKafka",
-				Properties:  map[string]spec.Schema{},
+				Properties: map[string]spec.Schema{
+					"source": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Allows configuration for KafkaSource installation",
+							Ref:         ref("github.com/aliok/dummy/pkg/apis/operator/v1alpha1.Source"),
+						},
+					},
+					"channel": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Allows configuration for KafkaChannel installation",
+							Ref:         ref("github.com/aliok/dummy/pkg/apis/operator/v1alpha1.Channel"),
+						},
+					},
+				},
 			},
 		},
-		Dependencies: []string{},
+		Dependencies: []string{
+			"github.com/aliok/dummy/pkg/apis/operator/v1alpha1.Channel", "github.com/aliok/dummy/pkg/apis/operator/v1alpha1.Source"},
 	}
 }
 
@@ -77,9 +91,58 @@ func schema_pkg_apis_operator_v1alpha1_KnativeKafkaStatus(ref common.ReferenceCa
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
 				Description: "KnativeKafkaStatus defines the observed state of KnativeKafka",
-				Properties:  map[string]spec.Schema{},
+				Properties: map[string]spec.Schema{
+					"observedGeneration": {
+						SchemaProps: spec.SchemaProps{
+							Description: "ObservedGeneration is the 'Generation' of the Service that was last processed by the controller.",
+							Type:        []string{"integer"},
+							Format:      "int64",
+						},
+					},
+					"conditions": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-patch-merge-key": "type",
+								"x-kubernetes-patch-strategy":  "merge",
+							},
+						},
+						SchemaProps: spec.SchemaProps{
+							Description: "Conditions the latest available observations of a resource's current state.",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Ref: ref("knative.dev/pkg/apis.Condition"),
+									},
+								},
+							},
+						},
+					},
+					"annotations": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Annotations is additional Status fields for the Resource to save some additional State as well as convey more information to the user. This is roughly akin to Annotations on any k8s resource, just the reconciler conveying richer information outwards.",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type:   []string{"string"},
+										Format: "",
+									},
+								},
+							},
+						},
+					},
+					"version": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The version of the installed release",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
 			},
 		},
-		Dependencies: []string{},
+		Dependencies: []string{
+			"knative.dev/pkg/apis.Condition"},
 	}
 }
