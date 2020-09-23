@@ -57,5 +57,6 @@ rules:
   - operator.serverless.openshift.io
   resources:
   - '*'
+  - knativekafkas
   verbs:
   - '*'
